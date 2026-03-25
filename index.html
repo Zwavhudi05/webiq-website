@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebIQ Group — Build Smarter. Launch Faster. Scale Digitally.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0B0B0B;
+      --bg2: #0f0f0f;
+      --bg3: #141414;
+      --bg4: #1a1a1a;
+      --blue: #3B82F6;
+      --blue-dim: rgba(59,130,246,0.12);
+      --blue-mid: rgba(59,130,246,0.25);
+      --blue-glow: rgba(59,130,246,0.5);
+      --text: #F0F0F0;
+      --muted: #7a7a8c;
+      --border: rgba(255,255,255,0.07);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --radius: 14px;
+      --radius-lg: 22px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── CURSOR GLOW ── */
+    #cursor-glow {
+      position: fixed;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+      z-index: 1;
+    }
+
+    /* ── UTILITY ── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 110px 0; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-body); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 18px;
+    }
+    .section-label::before {
+      content: ''; display: block;
+      width: 22px; height: 1px; background: var(--blue);
+    }
+    h2.section-title {
+      font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; line-height: 1.15; color: var(--text);
+      margin-bottom: 20px;
+    }
+    h2.section-title span { color: var(--blue); }
+    .section-desc {
+      font-size: 1.05rem; color: var(--muted); max-width: 560px; line-height: 1.75;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border-radius: 8px;
+      font-family: var(--font-body); font-size: 0.9rem; font-weight: 500;
+      cursor: pointer; text-decoration: none; transition: all 0.25s;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--blue); color: #fff;
+      box-shadow: 0 0 0 0 var(--blue-glow);
+    }
+    .btn-primary:hover {
+      background: #5a9cff;
+      box-shadow: 0 0 28px var(--blue-glow);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      border-color: var(--blue); color: var(--blue);
+      transform: translateY(-2px);
+    }
+    .tag {
+      display: inline-block; padding: 4px 12px;
+      border-radius: 20px; font-size: 0.72rem; font-weight: 500;
+      background: var(--blue-dim); color: var(--blue);
+      border: 1px solid var(--blue-mid); letter-spacing: 0.04em;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(11,11,11,0.92);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; max-width: 1160px; margin: 0 auto;
+    }
+    .nav-logo {
+      font-family: var(--font-display); font-size: 1.3rem; font-weight: 800;
+      color: var(--text); text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .nav-logo span { color: var(--blue); }
+    .nav-logo-icon {
+      width: 28px; height: 28px; background: var(--blue);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800; color: #fff;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 34px; list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.875rem;
+      transition: color 0.2s; font-weight: 400;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { display: flex; gap: 10px; align-items: center; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--text); transition: all 0.3s;
+    }
+    .mobile-menu {
+      display: none; flex-direction: column; gap: 0;
+      background: rgba(11,11,11,0.97); backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border); padding: 12px 0;
+    }
+    .mobile-menu a {
+      padding: 14px 24px; color: var(--muted); text-decoration: none;
+      font-size: 0.95rem; border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--blue); }
+    .mobile-menu.open { display: flex; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 120px 0 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; pointer-events: none;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+    .hero-blob {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+    }
+    .hero-blob-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, #3B82F6 0%, transparent 70%);
+      top: -100px; left: -100px;
+    }
+    .hero-blob-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #1d4ed8 0%, transparent 70%);
+      bottom: 0; right: -100px;
+    }
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: 1160px; margin: 0 auto; padding: 0 24px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 16px; border-radius: 40px;
+      border: 1px solid var(--blue-mid); background: var(--blue-dim);
+      font-size: 0.78rem; color: var(--blue); margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--blue); animation: pulse 1.5s ease infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+    h1.hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 800; line-height: 1.07;
+      letter-spacing: -0.02em; color: var(--text);
+      margin-bottom: 26px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    h1.hero-title .blue { color: var(--blue); }
+    h1.hero-title .outline {
+      -webkit-text-stroke: 1.5px var(--blue);
+      color: transparent;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem); color: var(--muted);
+      max-width: 500px; margin-bottom: 42px; line-height: 1.7;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+    .hero-btns {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .hero-stats {
+      margin-top: 80px; display: flex; gap: 48px; flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .hero-stat-num {
+      font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+      color: var(--text); line-height: 1;
+    }
+    .hero-stat-num span { color: var(--blue); }
+    .hero-stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+    .hero-scroll {
+      position: absolute; bottom: 36px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; animation: fadeIn 1s 1s ease both;
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--blue), transparent);
+      animation: scrollDown 1.5s ease infinite;
+    }
+    @keyframes scrollDown {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      50.001% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    /* ── DIVISIONS RIBBON ── */
+    .divisions {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg3);
+      padding: 22px 0;
+    }
+    .divisions-inner {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; flex-wrap: wrap; padding: 0 24px;
+    }
+    .div-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.83rem; font-weight: 500; color: var(--text);
+      background: var(--bg4); transition: all 0.25s;
+    }
+    .div-chip:hover { border-color: var(--blue); color: var(--blue); }
+    .div-chip-icon { font-size: 1rem; }
+    .div-sep { color: var(--border); font-size: 1.5rem; }
+
+    /* ── ABOUT ── */
+    #about { background: var(--bg2); }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
+    }
+    .about-visual {
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .about-card-main {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 36px;
+      width: 100%; position: relative; overflow: hidden;
+    }
+    .about-card-main::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+    }
+    .about-big-num {
+      font-family: var(--font-display); font-size: 5rem; font-weight: 800;
+      color: var(--blue-dim); line-height: 1; margin-bottom: 4px;
+      background: linear-gradient(135deg, var(--blue) 0%, #1d4ed8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .mission-box {
+      margin-top: 28px; padding: 22px;
+      background: var(--blue-dim); border-radius: var(--radius);
+      border: 1px solid var(--blue-mid);
+    }
+    .mission-label {
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 8px; font-weight: 500;
+    }
+    .mission-text {
+      font-size: 0.92rem; color: var(--text); line-height: 1.65;
+    }
+
+    /* ── SERVICES ── */
+    .services-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px; margin-top: 56px;
+    }
+    .service-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 34px 28px;
+      transition: all 0.3s; position: relative; overflow: hidden;
+      cursor: default;
+    }
+    .service-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+      transform: scaleX(0); transition: transform 0.4s;
+    }
+    .service-card:hover { border-color: rgba(59,130,246,0.3); transform: translateY(-6px); }
+    .service-card:hover::after { transform: scaleX(1); }
+    .service-icon {
+      width: 50px; height: 50px; border-radius: 12px;
+      background: var(--blue-dim); border: 1px solid var(--blue-mid);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 22px;
+      transition: background 0.3s;
+    }
+    .service-card:hover .service-icon { background: var(--blue-mid); }
+    .service-name {
+      font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+      margin-bottom: 10px; color: var(--text);
+    }
+    .service-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── SAAS ── */
+    #saas { background: var(--bg2); }
+    .saas-wrapper {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
+      display: grid; grid-template-columns: 1fr 1fr; align-items: stretch;
+    }
+    .saas-content { padding: 60px 52px; }
+    .saas-visual {
+      background: linear-gradient(135deg, #0d1b35 0%, #091526 100%);
+      border-left: 1px solid var(--border);
+      padding: 40px; display: flex; flex-direction: column;
+      justify-content: center; position: relative; overflow: hidden;
+    }
+    .saas-visual::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(59,130,246,0.12) 0%, transparent 70%);
+    }
+    .mock-app {
+      background: rgba(255,255,255,0.04); border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08); padding: 20px;
+      position: relative; z-index: 1;
+    }
+    .mock-header {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 18px;
+    }
+    .mock-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .mock-row {
+      height: 10px; border-radius: 4px;
+      background: rgba(255,255,255,0.07); margin-bottom: 8px;
+    }
+    .mock-row.blue { background: rgba(59,130,246,0.3); }
+    .mock-row.short { width: 60%; }
+    .mock-row.med { width: 80%; }
+    .mock-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px;
+    }
+    .mock-cell {
+      height: 50px; border-radius: 6px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+    }
+    .feature-list {
+      list-style: none; display: flex; flex-direction: column; gap: 10px;
+      margin: 24px 0;
+    }
+    .feature-list li {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.9rem; color: var(--muted);
+    }
+    .feature-list li::before {
+      content: '✓'; color: var(--blue); font-weight: 700; font-size: 0.8rem;
+      width: 18px; height: 18px; background: var(--blue-dim);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .saas-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 20px;
+      background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3);
+      color: #fbbf24; font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px;
+    }
+
+    /* ── COMMERCE ── */
+    .commerce-grid {
+      display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center;
+      margin-top: 56px;
+    }
+    .commerce-features {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px;
+    }
+    .comm-feat {
+      padding: 20px; background: var(--bg3); border-radius: var(--radius);
+      border: 1px solid var(--border); transition: border-color 0.25s;
+    }
+    .comm-feat:hover { border-color: var(--blue-mid); }
+    .comm-feat-icon { font-size: 1.3rem; margin-bottom: 8px; }
+    .comm-feat-title { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .comm-feat-desc { font-size: 0.78rem; color: var(--muted); }
+    .commerce-visual {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
+    }
+    .mock-store {
+      padding: 24px;
+    }
+    .mock-store-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mock-logo-pill {
+      height: 10px; width: 80px; border-radius: 4px;
+      background: rgba(255,255,255,0.1);
+    }
+    .mock-nav-pills { display: flex; gap: 6px; }
+    .mock-nav-pill {
+      height: 8px; border-radius: 4px;
+      background: rgba(255,255,255,0.07);
+    }
+    .mock-products {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+    }
+    .mock-product {
+      border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .mock-product-img {
+      height: 60px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(29,78,216,0.1));
+    }
+    .mock-product-info { padding: 8px; }
+    .mock-product-name {
+      height: 6px; border-radius: 3px;
+      background: rgba(255,255,255,0.12); margin-bottom: 6px;
+    }
+    .mock-product-price {
+      height: 6px; width: 50%; border-radius: 3px;
+      background: rgba(59,130,246,0.4);
+    }
+    .mock-store-footer {
+      margin-top: 16px; display: flex; gap: 8px;
+    }
+    .mock-btn-primary {
+      flex: 1; height: 32px; border-radius: 6px;
+      background: var(--blue); opacity: 0.8;
+    }
+    .mock-btn-secondary {
+      width: 32px; height: 32px; border-radius: 6px;
+      background: var(--bg4); border: 1px solid var(--border);
+    }
+
+    /* ── LABS ── */
+    #labs { background: var(--bg2); }
+    .labs-inner {
+      display: grid; grid-template-columns: 1fr 1.6fr; gap: 72px; align-items: center;
+    }
+    .labs-cards {
+      display: grid; grid-template-columns: 1fr; gap: 16px;
+    }
+    .lab-card {
+      padding: 24px; background: var(--bg3); border-radius: var(--radius);
+      border: 1px solid var(--border); transition: all 0.3s;
+      display: flex; gap: 18px; align-items: flex-start;
+    }
+    .lab-card:hover { border-color: var(--blue-mid); transform: translateX(6px); }
+    .lab-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      border-radius: 10px; background: var(--blue-dim);
+      border: 1px solid var(--blue-mid); display: flex; align-items: center;
+      justify-content: center; font-size: 1.1rem;
+    }
+    .lab-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .lab-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── PORTFOLIO ── */
+    .portfolio-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px; margin-top: 56px;
+    }
+    .portfolio-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
+      transition: all 0.35s; cursor: default;
+    }
+    .portfolio-card:hover {
+      border-color: rgba(59,130,246,0.3); transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(59,130,246,0.1);
+    }
+    .portfolio-thumb {
+      height: 200px; position: relative; overflow: hidden;
+    }
+    .portfolio-thumb-bg {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .p1-bg { background: linear-gradient(135deg, #0d2347 0%, #0b1a33 100%); }
+    .p2-bg { background: linear-gradient(135deg, #0d2f1a 0%, #0b1f12 100%); }
+    .p3-bg { background: linear-gradient(135deg, #2d1b0d 0%, #1f1208 100%); }
+    .portfolio-thumb-icon { font-size: 3.5rem; opacity: 0.6; }
+    .portfolio-thumb-lines {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 20px,
+        rgba(255,255,255,0.015) 20px, rgba(255,255,255,0.015) 21px
+      );
+    }
+    .portfolio-info { padding: 28px; }
+    .portfolio-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .portfolio-title {
+      font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .portfolio-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.55; }
+
+    /* ── WHY ── */
+    #why { background: var(--bg2); }
+    .why-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px; margin-top: 56px;
+    }
+    .why-card {
+      padding: 36px 28px; background: var(--bg3); border-radius: var(--radius-lg);
+      border: 1px solid var(--border); text-align: center; transition: all 0.3s;
+    }
+    .why-card:hover {
+      border-color: var(--blue-mid);
+      box-shadow: 0 0 40px rgba(59,130,246,0.07);
+      transform: translateY(-4px);
+    }
+    .why-icon {
+      width: 60px; height: 60px; border-radius: 16px;
+      background: var(--blue-dim); border: 1px solid var(--blue-mid);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin: 0 auto 22px;
+    }
+    .why-title {
+      font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+      color: var(--text); margin-bottom: 10px;
+    }
+    .why-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--bg);
+      position: relative; overflow: hidden;
+    }
+    #contact::before {
+      content: '';
+      position: absolute; bottom: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 800px; height: 400px;
+      background: radial-gradient(ellipse, rgba(59,130,246,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .contact-wrapper {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 72px 60px;
+      text-align: center; max-width: 780px; margin: 0 auto;
+      position: relative; overflow: hidden;
+    }
+    .contact-wrapper::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+    }
+    .contact-title {
+      font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800; color: var(--text); margin: 16px 0 14px; line-height: 1.2;
+    }
+    .contact-sub {
+      color: var(--muted); font-size: 1rem; margin-bottom: 48px; max-width: 440px;
+      margin-left: auto; margin-right: auto;
+    }
+    .contact-btns {
+      display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-wa {
+      background: #25D366; color: #fff; border: none;
+    }
+    .btn-wa:hover {
+      background: #1eb855; transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37,211,102,0.35);
+    }
+    .btn-li {
+      background: #0077B5; color: #fff; border: none;
+    }
+    .btn-li:hover {
+      background: #006097; transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,119,181,0.35);
+    }
+    .contact-direct {
+      margin-top: 36px; display: flex; gap: 32px;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .contact-direct-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .contact-direct-item a {
+      color: var(--blue); text-decoration: none; transition: color 0.2s;
+    }
+    .contact-direct-item a:hover { color: #93c5fd; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0 32px;
+      background: var(--bg);
+    }
+    .footer-inner {
+      max-width: 1160px; margin: 0 auto; padding: 0 24px;
+    }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 40px; flex-wrap: wrap; margin-bottom: 40px;
+    }
+    .footer-brand { max-width: 280px; }
+    .footer-logo {
+      font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+      color: var(--text);
+    }
+    .footer-brand-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+    .footer-cols { display: flex; gap: 60px; flex-wrap: wrap; }
+    .footer-col-title {
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text); font-weight: 600; margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a {
+      font-size: 0.85rem; color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--blue); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+    .footer-socials { display: flex; gap: 12px; }
+    .social-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border); display: flex; align-items: center;
+      justify-content: center; text-decoration: none; color: var(--muted);
+      font-size: 0.9rem; transition: all 0.25s;
+    }
+    .social-icon:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── REVEAL ANIMATIONS ── */
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .about-grid, .saas-wrapper, .commerce-grid, .labs-inner { grid-template-columns: 1fr; }
+      .saas-visual { display: none; }
+      .commerce-visual { display: none; }
+      .contact-wrapper { padding: 48px 28px; }
+      .footer-top { flex-direction: column; }
+      .hero-stats { gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .section { padding: 80px 0; }
+      .hero-btns { flex-direction: column; }
+      .contact-btns { flex-direction: column; align-items: stretch; }
+      .contact-btns .btn { justify-content: center; }
+      .why-grid, .services-grid { grid-template-columns: 1fr; }
+      .commerce-features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR GLOW -->
+  <div id="cursor-glow"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <div class="nav-logo-icon">W</div>
+        WebIQ<span>Group</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#saas">SaaS</a></li>
+        <li><a href="#portfolio">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="mailto:webiq.sa@gmail.com" class="btn btn-ghost">Email Us</a>
+        <a href="https://wa.me/27815316955" target="_blank" class="btn btn-primary">WhatsApp ↗</a>
+      </div>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#about" class="nav-link-mobile">About</a>
+      <a href="#services" class="nav-link-mobile">Services</a>
+      <a href="#saas" class="nav-link-mobile">SaaS</a>
+      <a href="#commerce" class="nav-link-mobile">Commerce</a>
+      <a href="#labs" class="nav-link-mobile">Labs</a>
+      <a href="#portfolio" class="nav-link-mobile">Portfolio</a>
+      <a href="#contact" class="nav-link-mobile">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg">
+      <div class="hero-grid"></div>
+      <div class="hero-blob hero-blob-1"></div>
+      <div class="hero-blob hero-blob-2"></div>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Now onboarding new clients for 2025
+      </div>
+      <h1 class="hero-title">
+        Build <span class="blue">Smarter.</span><br/>
+        Launch <span class="outline">Faster.</span><br/>
+        Scale Digitally.
+      </h1>
+      <p class="hero-sub">
+        Websites, SaaS, and digital solutions for modern businesses — crafted to convert and built to last.
+      </p>
+      <div class="hero-btns">
+        <a href="mailto:webiq.sa@gmail.com" class="btn btn-primary">
+          ✦ Get a Website
+        </a>
+        <a href="#saas" class="btn btn-ghost">
+          Try Our SaaS →
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">50<span>+</span></div>
+          <div class="hero-stat-label">Projects Delivered</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">4</div>
+          <div class="hero-stat-label">Divisions</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">100<span>%</span></div>
+          <div class="hero-stat-label">Client Satisfaction</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- DIVISIONS RIBBON -->
+  <div class="divisions">
+    <div class="divisions-inner">
+      <div class="div-chip"><span class="div-chip-icon">🏢</span> WebIQ Agency</div>
+      <div class="div-sep">·</div>
+      <div class="div-chip"><span class="div-chip-icon">⚙️</span> WebIQ Systems</div>
+      <div class="div-sep">·</div>
+      <div class="div-chip"><span class="div-chip-icon">🛒</span> WebIQ Commerce</div>
+      <div class="div-sep">·</div>
+      <div class="div-chip"><span class="div-chip-icon">🔬</span> WebIQ Labs</div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about" class="section">
+    <div class="container">
+      <div class="about-grid">
+        <div class="reveal">
+          <span class="section-label">About WebIQ Group</span>
+          <h2 class="section-title">A digital company <span>built for the future</span></h2>
+          <p class="section-desc">
+            WebIQ Group is a South African tech company on a mission to democratise digital access for every business — from startups to scale-ups. We design, build, and deploy digital products that are fast, beautiful, and effective.
+          </p>
+          <p class="section-desc" style="margin-top:16px;">
+            Through four specialised divisions, we cover the entire digital stack: from your first website to enterprise SaaS, high-converting eCommerce, and cutting-edge AI-powered solutions.
+          </p>
+        </div>
+        <div class="about-visual reveal reveal-delay-2">
+          <div class="about-card-main">
+            <div class="about-big-num">04</div>
+            <div style="color:var(--muted);font-size:0.9rem;margin-bottom:22px;">Specialised divisions working as one.</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg4);border-radius:8px;border:1px solid var(--border);">
+                <span>🏢</span>
+                <div>
+                  <div style="font-size:0.85rem;font-weight:600;color:var(--text);">WebIQ Agency</div>
+                  <div style="font-size:0.75rem;color:var(--muted);">Web development & design</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg4);border-radius:8px;border:1px solid var(--border);">
+                <span>⚙️</span>
+                <div>
+                  <div style="font-size:0.85rem;font-weight:600;color:var(--text);">WebIQ Systems</div>
+                  <div style="font-size:0.75rem;color:var(--muted);">SaaS products & platforms</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg4);border-radius:8px;border:1px solid var(--border);">
+                <span>🛒</span>
+                <div>
+                  <div style="font-size:0.85rem;font-weight:600;color:var(--text);">WebIQ Commerce</div>
+                  <div style="font-size:0.75rem;color:var(--muted);">eCommerce solutions</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--blue-dim);border-radius:8px;border:1px solid var(--blue-mid);">
+                <span>🔬</span>
+                <div>
+                  <div style="font-size:0.85rem;font-weight:600;color:var(--text);">WebIQ Labs</div>
+                  <div style="font-size:0.75rem;color:var(--blue);">AI & innovation projects</div>
+                </div>
+              </div>
+            </div>
+            <div class="mission-box">
+              <div class="mission-label">Our Mission</div>
+              <div class="mission-text">To empower businesses of every size with premium digital tools, without the premium price tag.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="section" style="background:var(--bg3);">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">WebIQ Agency</span>
+        <h2 class="section-title">Services that <span>drive results</span></h2>
+        <p class="section-desc">From stunning landing pages to full business websites, we deliver high-quality digital experiences that engage and convert.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-icon">🌐</div>
+          <div class="service-name">Business Websites</div>
+          <div class="service-desc">Professional, modern websites built to represent your brand and convert visitors into customers. Mobile-first, fast, and SEO-ready.</div>
+        </div>
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-icon">🛍️</div>
+          <div class="service-name">eCommerce Stores</div>
+          <div class="service-desc">Full-featured online stores with product management, payment integration, and optimised checkout flows that maximise sales.</div>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-icon">⚡</div>
+          <div class="service-name">Landing Pages</div>
+          <div class="service-desc">High-converting landing pages for campaigns, product launches, and lead generation — designed to capture attention instantly.</div>
+        </div>
+        <div class="service-card reveal reveal-delay-3">
+          <div class="service-icon">🔧</div>
+          <div class="service-name">Website Maintenance</div>
+          <div class="service-desc">Ongoing support, updates, security monitoring, and performance optimisation so your website stays fast and reliable 24/7.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAAS -->
+  <section id="saas" class="section">
+    <div class="container">
+      <div class="reveal" style="margin-bottom:48px;">
+        <span class="section-label">WebIQ Systems</span>
+        <h2 class="section-title">SaaS products <span>that work for you</span></h2>
+        <p class="section-desc">We build and operate software-as-a-service products for real business problems — starting with inventory management.</p>
+      </div>
+      <div class="saas-wrapper reveal">
+        <div class="saas-content">
+          <div class="saas-badge">🚀 Early Access Open</div>
+          <h3 style="font-family:var(--font-display);font-size:1.7rem;font-weight:800;color:var(--text);margin-bottom:12px;line-height:1.2;">
+            WebIQ<br/>Inventory Lite
+          </h3>
+          <p style="color:var(--muted);font-size:0.92rem;line-height:1.7;margin-bottom:8px;">
+            Simple, powerful inventory management designed for small businesses. Track stock, manage suppliers, and monitor sales — all from one clean dashboard.
+          </p>
+          <ul class="feature-list">
+            <li>Real-time stock tracking & low-stock alerts</li>
+            <li>Multi-location inventory support</li>
+            <li>Supplier & purchase order management</li>
+            <li>Sales reporting & analytics dashboard</li>
+            <li>CSV import/export & integrations</li>
+          </ul>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+            <a href="mailto:webiq.sa@gmail.com" class="btn btn-primary">Join Early Access →</a>
+            <a href="https://wa.me/27815316955" target="_blank" class="btn btn-ghost">Chat with us</a>
+          </div>
+          <div style="margin-top:20px;font-size:0.78rem;color:var(--muted);">🔒 Free during early access · No credit card required</div>
+        </div>
+        <div class="saas-visual">
+          <div style="position:relative;z-index:1;">
+            <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:12px;">Inventory Dashboard</div>
+            <div class="mock-app">
+              <div class="mock-header">
+                <div class="mock-dot" style="background:#ef4444"></div>
+                <div class="mock-dot" style="background:#fbbf24"></div>
+                <div class="mock-dot" style="background:#22c55e"></div>
+                <div style="flex:1;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;margin-left:8px;"></div>
+              </div>
+              <div class="mock-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px;">
+                <div style="padding:10px;background:rgba(59,130,246,0.1);border-radius:6px;border:1px solid var(--blue-mid);">
+                  <div style="font-size:0.65rem;color:var(--blue);margin-bottom:4px;">STOCK</div>
+                  <div style="font-size:1rem;font-weight:700;color:var(--text);">248</div>
+                </div>
+                <div style="padding:10px;background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid var(--border);">
+                  <div style="font-size:0.65rem;color:var(--muted);margin-bottom:4px;">ORDERS</div>
+                  <div style="font-size:1rem;font-weight:700;color:var(--text);">34</div>
+                </div>
+                <div style="padding:10px;background:rgba(34,197,94,0.1);border-radius:6px;border:1px solid rgba(34,197,94,0.3);">
+                  <div style="font-size:0.65rem;color:#22c55e;margin-bottom:4px;">VALUE</div>
+                  <div style="font-size:1rem;font-weight:700;color:var(--text);">R14k</div>
+                </div>
+              </div>
+              <div class="mock-row blue med"></div>
+              <div class="mock-row short"></div>
+              <div class="mock-row med"></div>
+              <div class="mock-row" style="width:90%"></div>
+              <div class="mock-row short"></div>
+              <div class="mock-grid" style="margin-top:12px;">
+                <div class="mock-cell"></div>
+                <div class="mock-cell" style="background:rgba(59,130,246,0.15);border-color:var(--blue-mid);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMERCE -->
+  <section id="commerce" class="section" style="background:var(--bg3);">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">WebIQ Commerce</span>
+        <h2 class="section-title">Sell online with <span>confidence</span></h2>
+      </div>
+      <div class="commerce-grid">
+        <div class="reveal">
+          <p class="section-desc">
+            WebIQ Commerce builds powerful online stores that drive real revenue. From product listings to secure checkout, we handle the entire eCommerce stack so you can focus on growing your business.
+          </p>
+          <p style="color:var(--muted);font-size:0.95rem;line-height:1.7;margin-top:16px;max-width:500px;">
+            Whether you're selling physical products, digital downloads, or services — we craft conversion-focused stores that look stunning on every device.
+          </p>
+          <div class="commerce-features">
+            <div class="comm-feat">
+              <div class="comm-feat-icon">💳</div>
+              <div class="comm-feat-title">Payment Integration</div>
+              <div class="comm-feat-desc">PayFast, Stripe, PayPal & more</div>
+            </div>
+            <div class="comm-feat">
+              <div class="comm-feat-icon">📦</div>
+              <div class="comm-feat-title">Inventory Sync</div>
+              <div class="comm-feat-desc">Real-time stock management</div>
+            </div>
+            <div class="comm-feat">
+              <div class="comm-feat-icon">📊</div>
+              <div class="comm-feat-title">Analytics</div>
+              <div class="comm-feat-desc">Sales insights & reporting</div>
+            </div>
+            <div class="comm-feat">
+              <div class="comm-feat-icon">📱</div>
+              <div class="comm-feat-title">Mobile-First</div>
+              <div class="comm-feat-desc">Optimised for all devices</div>
+            </div>
+          </div>
+          <div style="margin-top:28px;">
+            <a href="mailto:webiq.sa@gmail.com" class="btn btn-primary">Start Selling Online →</a>
+          </div>
+        </div>
+        <div class="commerce-visual reveal reveal-delay-2">
+          <div class="mock-store">
+            <div class="mock-store-header">
+              <div class="mock-logo-pill"></div>
+              <div class="mock-nav-pills">
+                <div class="mock-nav-pill" style="width:40px;"></div>
+                <div class="mock-nav-pill" style="width:30px;"></div>
+                <div class="mock-nav-pill" style="width:35px;"></div>
+              </div>
+            </div>
+            <div style="height:8px;border-radius:4px;background:rgba(59,130,246,0.3);margin-bottom:16px;width:55%;"></div>
+            <div class="mock-products">
+              <div class="mock-product">
+                <div class="mock-product-img"></div>
+                <div class="mock-product-info">
+                  <div class="mock-product-name"></div>
+                  <div class="mock-product-price"></div>
+                </div>
+              </div>
+              <div class="mock-product">
+                <div class="mock-product-img" style="background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(21,128,61,0.1));"></div>
+                <div class="mock-product-info">
+                  <div class="mock-product-name"></div>
+                  <div class="mock-product-price" style="background:rgba(34,197,94,0.4);"></div>
+                </div>
+              </div>
+              <div class="mock-product">
+                <div class="mock-product-img" style="background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(180,83,9,0.1));"></div>
+                <div class="mock-product-info">
+                  <div class="mock-product-name"></div>
+                  <div class="mock-product-price" style="background:rgba(251,191,36,0.4);"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mock-store-footer">
+              <div class="mock-btn-primary"></div>
+              <div class="mock-btn-secondary"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LABS -->
+  <section id="labs" class="section">
+    <div class="container">
+      <div class="labs-inner">
+        <div class="reveal">
+          <span class="section-label">WebIQ Labs</span>
+          <h2 class="section-title">Where <span>innovation</span> begins</h2>
+          <p class="section-desc">
+            WebIQ Labs is our research and innovation arm. We experiment with AI, build new digital products, and prototype the tools of tomorrow.
+          </p>
+          <div style="margin-top:28px;">
+            <a href="mailto:webiq.sa@gmail.com" class="btn btn-primary">Partner With Labs →</a>
+          </div>
+        </div>
+        <div class="labs-cards reveal reveal-delay-1">
+          <div class="lab-card">
+            <div class="lab-icon">🤖</div>
+            <div>
+              <div class="lab-title">AI-Powered Applications</div>
+              <div class="lab-desc">We integrate large language models and automation into real business workflows — from smart chatbots to intelligent data processing.</div>
+            </div>
+          </div>
+          <div class="lab-card">
+            <div class="lab-icon">🧪</div>
+            <div>
+              <div class="lab-title">Product R&D</div>
+              <div class="lab-desc">Our lab constantly prototypes new SaaS ideas and digital tools, testing concepts with real users before full development.</div>
+            </div>
+          </div>
+          <div class="lab-card">
+            <div class="lab-icon">🔗</div>
+            <div>
+              <div class="lab-title">API Integrations & Automation</div>
+              <div class="lab-desc">Custom integrations that connect your business systems — CRMs, ERPs, payment gateways, and more — into one seamless workflow.</div>
+            </div>
+          </div>
+          <div class="lab-card">
+            <div class="lab-icon">📡</div>
+            <div>
+              <div class="lab-title">Emerging Technology Consulting</div>
+              <div class="lab-desc">We help businesses understand and adopt emerging technologies — so you're never behind the curve.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio" class="section" style="background:var(--bg3);">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">Our Work</span>
+        <h2 class="section-title">Projects we're <span>proud of</span></h2>
+        <p class="section-desc">A selection of recent work across web development, eCommerce, and SaaS product design.</p>
+      </div>
+      <div class="portfolio-grid">
+        <div class="portfolio-card reveal">
+          <div class="portfolio-thumb">
+            <div class="portfolio-thumb-bg p1-bg">
+              <div class="portfolio-thumb-icon">🏥</div>
+            </div>
+            <div class="portfolio-thumb-lines"></div>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-meta">
+              <span class="tag">Business Website</span>
+            </div>
+            <div class="portfolio-title">MedCore Clinic — Healthcare Portal</div>
+            <div class="portfolio-desc">Full-stack website with appointment booking, doctor profiles, and patient portal for a multi-branch medical practice.</div>
+          </div>
+        </div>
+        <div class="portfolio-card reveal reveal-delay-1">
+          <div class="portfolio-thumb">
+            <div class="portfolio-thumb-bg p2-bg">
+              <div class="portfolio-thumb-icon">🌿</div>
+            </div>
+            <div class="portfolio-thumb-lines"></div>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-meta">
+              <span class="tag">eCommerce</span>
+            </div>
+            <div class="portfolio-title">GreenLeaf Market — Online Store</div>
+            <div class="portfolio-desc">Complete WooCommerce store with inventory sync, PayFast integration, and a custom subscription model for organic produce delivery.</div>
+          </div>
+        </div>
+        <div class="portfolio-card reveal reveal-delay-2">
+          <div class="portfolio-thumb">
+            <div class="portfolio-thumb-bg p3-bg">
+              <div class="portfolio-thumb-icon">📊</div>
+            </div>
+            <div class="portfolio-thumb-lines"></div>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-meta">
+              <span class="tag">SaaS Dashboard</span>
+            </div>
+            <div class="portfolio-title">FleetTrack SA — Logistics Platform</div>
+            <div class="portfolio-desc">Real-time fleet management dashboard with driver tracking, route optimisation, and automated reporting for a logistics company.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE US -->
+  <section id="why" class="section">
+    <div class="container">
+      <div style="text-align:center;" class="reveal">
+        <span class="section-label">Why WebIQ</span>
+        <h2 class="section-title" style="margin:0 auto 14px;">Why businesses <span>choose us</span></h2>
+        <p class="section-desc" style="margin:0 auto;">We combine startup agility with enterprise quality. Here's what sets WebIQ Group apart.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card reveal">
+          <div class="why-icon">⚡</div>
+          <div class="why-title">Fast Delivery</div>
+          <div class="why-desc">Most projects delivered in 7–21 days. We move fast without compromising on quality.</div>
+        </div>
+        <div class="why-card reveal reveal-delay-1">
+          <div class="why-icon">💰</div>
+          <div class="why-title">Affordable Pricing</div>
+          <div class="why-desc">Premium quality at prices that make sense for startups and growing businesses.</div>
+        </div>
+        <div class="why-card reveal reveal-delay-2">
+          <div class="why-icon">📈</div>
+          <div class="why-title">Scalable Solutions</div>
+          <div class="why-desc">Everything we build is designed to grow with your business — no dead ends.</div>
+        </div>
+        <div class="why-card reveal reveal-delay-3">
+          <div class="why-icon">✨</div>
+          <div class="why-title">Modern Design</div>
+          <div class="why-desc">We craft interfaces that feel premium, stay current, and make your brand unforgettable.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="contact-wrapper reveal">
+        <span class="section-label" style="justify-content:center;">Get In Touch</span>
+        <div class="contact-title">Ready to build<br/>something <span style="color:var(--blue);">great?</span></div>
+        <p class="contact-sub">Let's talk about your project. Reach us via email, WhatsApp, or LinkedIn — we respond fast.</p>
+        <div class="contact-btns">
+          <a href="mailto:webiq.sa@gmail.com" class="btn btn-primary">
+            ✉️ Email Us
+          </a>
+          <a href="https://wa.me/27815316955" target="_blank" class="btn btn-wa">
+            💬 Chat on WhatsApp
+          </a>
+          <a href="https://www.linkedin.com/company/webiq-sa" target="_blank" class="btn btn-li">
+            🔗 Visit LinkedIn
+          </a>
+        </div>
+        <div class="contact-direct">
+          <div class="contact-direct-item">
+            📧 <a href="mailto:webiq.sa@gmail.com">webiq.sa@gmail.com</a>
+          </div>
+          <div class="contact-direct-item">
+            📱 <a href="https://wa.me/27815316955" target="_blank">+27 81 531 6955</a>
+          </div>
+          <div class="contact-direct-item">
+            🏢 <a href="https://www.linkedin.com/company/webiq-sa" target="_blank">WebIQ SA on LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="nav-logo-icon">W</div>
+            WebIQ<span style="color:var(--blue);">Group</span>
+          </div>
+          <p class="footer-brand-desc">Building the digital infrastructure for modern businesses across South Africa and beyond.</p>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <div class="footer-col-title">Company</div>
+            <ul>
+              <li><a href="#about">About</a></li>
+              <li><a href="#portfolio">Portfolio</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <div class="footer-col-title">Services</div>
+            <ul>
+              <li><a href="#services">Business Websites</a></li>
+              <li><a href="#services">eCommerce</a></li>
+              <li><a href="#services">Landing Pages</a></li>
+              <li><a href="#services">Maintenance</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <div class="footer-col-title">Divisions</div>
+            <ul>
+              <li><a href="#services">WebIQ Agency</a></li>
+              <li><a href="#saas">WebIQ Systems</a></li>
+              <li><a href="#commerce">WebIQ Commerce</a></li>
+              <li><a href="#labs">WebIQ Labs</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2025 WebIQ Group. All rights reserved.</div>
+        <div class="footer-socials">
+          <a href="mailto:webiq.sa@gmail.com" class="social-icon" title="Email">✉</a>
+          <a href="https://wa.me/27815316955" target="_blank" class="social-icon" title="WhatsApp">💬</a>
+          <a href="https://www.linkedin.com/company/webiq-sa" target="_blank" class="social-icon" title="LinkedIn">in</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Cursor glow
+    const glow = document.getElementById('cursor-glow');
+    document.addEventListener('mousemove', e => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
+    // Sticky nav
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
